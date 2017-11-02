@@ -2,6 +2,9 @@
     "use strict";
     angular.module("spa-demo")
     .constant("spa-demo.APP_CONFIG", {
-        main_page_html: "<%= asset_path('spa-demo/pages/main.html') %>"
+        server_url: "<%= ENV['RAILS_API_URL'] %>",
+        main_page_html: "<%= asset_path('spa-demo/pages/main.html') %>",
+        
+        foos_html:"<%= asset_path('spa-demo/foos/foos.html') %>"
     });
 })();
