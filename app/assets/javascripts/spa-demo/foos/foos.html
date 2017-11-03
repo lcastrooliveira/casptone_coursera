@@ -1,4 +1,9 @@
 <div>
     <h3>Foos</h3>
     <span>(from spa-demo/foos/foos.html)</span>
+    <ul>
+      <li ng-repeat="foo in foosVM.foos | orderBy: 'name'" >
+        <a ng-click="foosVM.edit(foo)">{{foo.name}}</a>
+      </li>
+    </ul>
 </div>

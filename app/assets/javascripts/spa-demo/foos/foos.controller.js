@@ -16,6 +16,7 @@
         ////////////////
         function activate() { 
             new Foo();
+            vm.foos = Foo.query();
         }
 
         function newFoo() {
