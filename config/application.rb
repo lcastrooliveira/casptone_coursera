@@ -34,7 +34,7 @@ module Myapp
 
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do
-        origins '*'
+        origins 'https://lcastro-coursera-staging.herokuapp.com', 'https://lcastro-coursera-prod.herokuapp.com'
         resource '/api/*', headers: :any, methods: [:get, :post, :put, :delete, :options]
       end
     end
