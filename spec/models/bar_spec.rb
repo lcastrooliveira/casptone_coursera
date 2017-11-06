@@ -4,9 +4,7 @@ require 'mongo'
 Mongo::Logger.logger.level = ::Logger::INFO
 
 describe Bar, type: :model, orm: :mongoid do
-  before(:all) do
-    Bar.delete_all
-  end
+  include_context 'db_cleanup'
 
   context Bar do
     it do
@@ -16,10 +14,8 @@ describe Bar, type: :model, orm: :mongoid do
   end
 
   context 'created Bar (let)' do
-    let(:bar) { Bar.create(name: 'test') }
-    after(:each) do
-      bar.delete
-    end
+    let(:bar) { FactoryGirl.create(:bar, name: 'test') }
+    include_context 'db_scope'
 
     it { expect(bar).to be_persisted }
     it { expect(bar.name).to eq('test') }
