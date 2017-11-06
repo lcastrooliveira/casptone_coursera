@@ -20,6 +20,7 @@ end
 group :development, :test do
   gem 'byebug', '~>9.0.6'
   gem 'httparty', '~>0.14.0'
+  gem 'mongoid-rspec', '~> 3.0', '>= 3.0.0'
   gem 'pry-byebug', '~>3.4.0'
   gem 'rspec-rails', '~> 3.5.2'
 end
@@ -28,6 +29,7 @@ group :production do
   gem 'rails_12factor', '~>0.0.3'
 end
 
+gem 'database_cleaner', '~> 1.5', '>=1.5.3'
 gem 'mongoid', '~>5.1.5'
 gem 'pg', '~>0.19.0'
 gem 'puma', '~>3.6.0', platforms: :ruby
