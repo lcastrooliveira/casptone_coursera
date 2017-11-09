@@ -1,6 +1,8 @@
 require 'mongoid-rspec'
 require_relative 'support/database_cleaners.rb'
 require_relative 'support/api_helper.rb'
+require 'capybara/rspec'
+require 'capybara/poltergeist'
 
 RSpec.configure do |config|
   config.include Mongoid::Matchers, orm: :mongoid
@@ -13,4 +15,13 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
   config.shared_context_metadata_behavior = :apply_to_host_groups
+end
+
+Capybara.configure do |config|
+  config.default_driver = :rack_test
+  config.javascript_driver = :poltergeist
+end
+
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, phantomjs_logger: StringIO.new)
 end
