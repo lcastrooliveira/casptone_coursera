@@ -2,7 +2,8 @@
 class ApplicationController < ActionController::API
   include ActionController::ImplicitRender
 
-  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from ActiveRecord::RecordNotFound, Mongoid::Errors::DocumentNotFound,
+              with: :record_not_found
 
   protected
 
