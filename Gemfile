@@ -29,6 +29,7 @@ group :development, :test do
   gem 'launchy', '~> 2.4', '>= 2.4.3'
   gem 'poltergeist', '~> 1.11', '>= 1.11.0'
   gem 'selenium-webdriver', '~> 2.53', '>= 2.53.4'
+  gem 'simplecov', '~>0', '>= 0.12', require: false
 end
 
 group :production do

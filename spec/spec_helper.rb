@@ -1,6 +1,7 @@
 require 'mongoid-rspec'
 require_relative 'support/database_cleaners.rb'
 require_relative 'support/api_helper.rb'
+require_relative 'support/foo_ui_helper.rb'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
 
@@ -34,10 +35,20 @@ end
 
 Capybara.configure do |config|
   config.default_driver = :rack_test
-  # config.javascript_driver = :poltergeist
-  config.javascript_driver = :selenium
+  config.javascript_driver = :poltergeist
+  # config.javascript_driver = :selenium
 end
 
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, phantomjs_logger: StringIO.new)
+end
+
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter '/spec'
+    add_filter '/config'
+    add_group 'foos', ['foo']
+    add_group 'bars', ['bar']
+  end
 end
