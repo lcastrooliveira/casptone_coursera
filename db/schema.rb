@@ -43,8 +43,8 @@ ActiveRecord::Schema.define(version: 20171110235311) do
     t.string   "image"
     t.string   "email"
     t.json     "tokens"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree

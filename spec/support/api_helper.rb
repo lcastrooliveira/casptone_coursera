@@ -11,6 +11,11 @@ module ApiHelper
       send(http_method_name, path, params.to_json, headers)
     end
   end
+
+  def signup(registration, status = :ok)
+    jpost user_registration_path, registration
+    expect(response).to have_http_status status
+  end
 end
 
 RSpec.shared_examples 'resource index' do |model|

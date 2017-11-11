@@ -7,8 +7,7 @@ RSpec.describe 'Authentication Api', type: :request do
   context 'sign-up' do
     context 'valid registration' do
       it 'successfully creates account' do
-        jpost user_registration_path, user_props
-        expect(response).to have_http_status :ok
+        singup user_props
 
         payload = parsed_body
         expect(payload).to include('status' => 'success')
@@ -21,12 +20,37 @@ RSpec.describe 'Authentication Api', type: :request do
         expect(payload['data']).to include('created_at', 'updated_at')
       end
     end
+
     context 'invalid registration' do
       context 'missing information' do
-        it 'reports error with messages'
+        it 'reports error with messages' do
+          signup user_props.except(:email), :unprocessable_entity
+
+          payload = parsed_body
+          expect(payload).to include('status' => 'error')
+          expect(payload).to include('data')
+          expect(payload['data']).to include('email' => nil)
+          expect(payload).to include('errors')
+          expect(payload['errors']).to include('email')
+          expect(payload['errors']).to include('full_messages')
+          expect(payload['errors']['full_messages']).to include(/Email/i)
+        end
       end
       context 'non-unique information' do
-        it 'reports non-unique e-mail'
+        before do
+          signup user_props
+        end
+        it 'reports non-unique e-mail' do
+          signup user_props, :unprocessable_entity
+          payload = parsed_body
+          expect(payload).to include('status' => 'error')
+          expect(payload).to include('data')
+          expect(payload['data']).to include('email' => user_props[:email])
+          expect(payload).to include('errors')
+          expect(payload['errors']).to include('email')
+          expect(payload['errors']).to include('full_messages')
+          expect(payload['errors']['full_messages']).to include(/been taken/i)
+        end
       end
     end
   end
