@@ -1,5 +1,6 @@
 # ApplicationController
 class ApplicationController < ActionController::API
+  include DeviseTokenAuth::Concerns::SetUserByToken
   include ActionController::ImplicitRender
 
   rescue_from ActiveRecord::RecordNotFound, Mongoid::Errors::DocumentNotFound,
