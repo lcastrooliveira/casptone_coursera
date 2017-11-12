@@ -31,7 +31,8 @@ module ApiHelper
 
   def logout(status = :ok)
     jdelete destroy_user_session_path
-    expect(response).to have_http_status status
+    @last_tokens = {}
+    expect(response).to have_http_status status if status
   end
 
   def access_tokens?
@@ -120,13 +121,13 @@ end
 RSpec.shared_examples 'resource delete' do |model|
   let(:resource) { FactoryGirl.create(model) }
   it "can delete #{model}" do
-    head send("#{model}_path", resource.id)
+    jhead send("#{model}_path", resource.id)
     expect(response).to have_http_status :ok
 
-    delete send("#{model}_path", resource.id)
+    jdelete send("#{model}_path", resource.id)
     expect(response).to have_http_status :no_content
 
-    head send("#{model}_path", resource.id)
+    jhead send("#{model}_path", resource.id)
     expect(response).to have_http_status :not_found
   end
 end

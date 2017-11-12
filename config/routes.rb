@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   scope :api, defaults: { format: :json } do
     resources :foos, except: %i[new edit]
     resources :bars, except: %i[new edit]
+    resources :images, except: %i[new edit]
   end
 
   get '/ui' => 'ui#index'
