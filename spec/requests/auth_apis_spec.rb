@@ -7,7 +7,7 @@ RSpec.describe 'Authentication Api', type: :request do
   context 'sign-up' do
     context 'valid registration' do
       it 'successfully creates account' do
-        singup user_props
+        signup user_props
 
         payload = parsed_body
         expect(payload).to include('status' => 'success')
@@ -56,19 +56,64 @@ RSpec.describe 'Authentication Api', type: :request do
   end
 
   context 'anonymous user' do
-    it 'accesses unproteced'
-    it 'fails to access protected resource'
+    it 'accesses unproteced' do
+      get authn_whoami_path
+      expect(response).to have_http_status :ok
+      expect(parsed_body).to eq({})
+    end
+    it 'fails to access protected resource' do
+      get authn_checkme_path
+      expect(response).to have_http_status :unauthorized
+      expect(parsed_body).to include('errors' => [/You need to sign in/i])
+    end
   end
 
   context 'login' do
+    let(:account) { signup user_props, :ok }
+    let!(:user) { login account, :ok }
+
     context 'valid user login' do
-      it 'generates access token'
-      it 'grantes access to resource'
-      it 'grantes access to resource multiple times'
-      it 'logout'
+      it 'generates access token' do
+        expect(response.headers).to include('uid' => account[:uid])
+        expect(response.headers).to include('access-token')
+        expect(response.headers).to include('client')
+        expect(response.headers).to include('token-type' => 'Bearer')
+      end
+      it 'extracts access to headers' do
+        expect(access_tokens?).to be true
+
+        expect(access_tokens).to include('uid' => account[:uid])
+        expect(access_tokens).to include('access-token')
+        expect(access_tokens).to include('client')
+        expect(access_tokens).to include('token-type' => 'Bearer')
+      end
+      it 'grants access to resource' do
+        jget authn_checkme_path
+        expect(response).to have_http_status :ok
+
+        payload = parsed_body
+        expect(payload).to include('id' => account[:id])
+        expect(payload).to include('uid' => account[:uid])
+      end
+      it 'grants access to resource multiple times' do
+        10.times do
+          jget authn_checkme_path
+          expect(response).to have_http_status :ok
+        end
+      end
+      it 'logout' do
+        logout :ok
+        expect(access_tokens?).to be false
+
+        jget authn_checkme_path
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
     context 'invalid password' do
-      it 'rejects credentials'
+      it 'rejects credentials' do
+        login account.merge(password: '1234'), :unauthorized
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end
