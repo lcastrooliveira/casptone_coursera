@@ -7,8 +7,14 @@ Rails.application.routes.draw do
   scope :api, defaults: { format: :json } do
     resources :foos, except: %i[new edit]
     resources :bars, except: %i[new edit]
-    resources :images, except: %i[new edit]
-    resources :things, except: %i[new edit]
+    resources :images, except: %i[new edit] do
+      post 'thing_images', controller: :thing_images, action: :create
+      get 'thing_images', controller: :thing_images, action: :image_things
+      get 'linkable_things', controller: :thing_images, action: :linkable_things
+    end
+    resources :things, except: %i[new edit] do
+      resources :thing_images, only: %i[index create update destroy]
+    end
   end
 
   get '/ui' => 'ui#index'
