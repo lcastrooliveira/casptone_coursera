@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :foos, except: %i[new edit]
     resources :bars, except: %i[new edit]
     resources :images, except: %i[new edit]
+    resources :things, except: %i[new edit]
   end
 
   get '/ui' => 'ui#index'

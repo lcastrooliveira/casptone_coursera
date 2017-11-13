@@ -53,10 +53,10 @@ RSpec.shared_examples 'resource index' do |model|
   let(:payload) { parsed_body }
 
   it "returns all #{model} instances" do
-    get send("#{model}s_path"), {}, 'Accept' => 'application/json'
+    jget send("#{model}s_path"), {}, 'Accept' => 'application/json'
     expect(request.method).to eq('GET')
     expect(response.content_type).to eq('application/json')
-
+    # binding.pry
     expect(payload.count).to eq(resources.count)
     response_check if respond_to?(:response_check)
   end
@@ -68,14 +68,14 @@ RSpec.shared_examples 'resource show' do |model|
   let(:payload) { parsed_body }
 
   it "returns #{model} when using correct ID" do
-    get send("#{model}_path", resource.id)
+    jget send("#{model}_path", resource.id)
     expect(response).to have_http_status :ok
     expect(response.content_type).to eq('application/json')
     response_check if respond_to?(:response_check)
   end
 
   it 'returns not found when using incorrect ID' do
-    get send("#{model}_path", bad_id)
+    jget send("#{model}_path", bad_id)
     expect(response).to have_http_status :not_found
     expect(response.content_type).to eq('application/json')
 
@@ -101,7 +101,7 @@ RSpec.shared_examples 'resource create' do |model|
     expect(payload).to have_key('id')
     response_check if respond_to?(:response_check)
 
-    get send("#{model}_path", resource_id)
+    jget send("#{model}_path", resource_id)
     expect(response).to have_http_status :ok
   end
 end
