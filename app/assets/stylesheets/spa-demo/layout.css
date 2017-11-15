@@ -5,3 +5,8 @@ body {
 form .invalid {
     color: red;
 }
+
+.fullsize {
+    padding-left: 0px;
+    padding-right: 0px;
+}
