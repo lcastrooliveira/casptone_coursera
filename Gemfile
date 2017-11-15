@@ -45,9 +45,9 @@ gem 'pg', '~>0.19.0'
 gem 'puma', '~>3.6.0', platforms: :ruby
 
 source 'https://rails-assets.org' do
-  gem 'rails-assets-angular', '~> 1.5', '>=1.5.8'
+  gem 'rails-assets-angular', '1.5.9'
   gem 'rails-assets-angular-cookie'
-  gem 'rails-assets-angular-resource', '~> 1.5', '>=1.5.8'
+  gem 'rails-assets-angular-resource', '~>1.5.9'
   gem 'rails-assets-angular-ui-router', '~> 0.3', '>=0.3.1'
   gem 'rails-assets-bootstrap', '~> 3.3', '>=3.3.7'
   gem 'rails-assets-ng-token-auth', '~> 0.0', '>= 0.0.27'

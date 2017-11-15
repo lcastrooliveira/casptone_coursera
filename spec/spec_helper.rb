@@ -2,6 +2,7 @@ require 'mongoid-rspec'
 require_relative 'support/database_cleaners.rb'
 require_relative 'support/api_helper.rb'
 require_relative 'support/foo_ui_helper.rb'
+require_relative 'support/ui_helper.rb'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
 
@@ -23,6 +24,7 @@ end
 RSpec.configure do |config|
   config.include Mongoid::Matchers, orm: :mongoid
   config.include ApiHelper, type: :request
+  config.include UiHelper, type: :feature
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
