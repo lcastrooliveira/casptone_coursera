@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'Mainpages', type: :feature, js: true do
+RSpec.xfeature 'Mainpages', type: :feature, js: true do
   before(:each) do
     visit '/'
   end

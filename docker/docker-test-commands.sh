@@ -4,5 +4,5 @@
 set -x
 rake db:create RAILS_ENV=test
 rake db:migrate RAILS_ENV=test
-rspec spec/features/manage_foos_spec.rb -e "updated" --fail-fast
+rspec spec/features/authns_spec.rb -e "rejected registration" --fail-fast
 tail -f Gemfile
