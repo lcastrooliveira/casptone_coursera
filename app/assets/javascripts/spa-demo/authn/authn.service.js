@@ -13,11 +13,28 @@
         service.isAuthenticated = isAuthenticated;
         service.getCurrentUserName = getCurrentUserName;
         service.getCurrentUser = getCurrentUser;
+        service.login = login;
         
         return;
 
         function signup(registration) {
             return $auth.submitRegistration(registration);
+        }
+
+        function login(credentials) {
+            console.log('login', credentials.email);
+            var result = $auth.submitLogin({
+                email: credentials['email'],
+                password: credentials['password']
+            });
+            result.then(
+                function(response) {
+                    console.log('login complete');
+                    service.user = response;
+                }
+            );
+
+            return result;
         }
 
         function isAuthenticated() {

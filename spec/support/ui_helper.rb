@@ -20,4 +20,16 @@ module UiHelper
       expect(page).to have_button('Sign Up')
     end
   end
+
+  def login(credentials, success = true)
+    find('#navbar-loginlabel', text: 'Login').click
+    within('#login-form') do
+      fill_in('login_email', with: credentials[:email])
+      fill_in('login_password', with: credentials[:password])
+      click_button('Login')
+    end
+    using_wait_time 5 do
+      expect(page).to have_no_css('#login-form')
+    end
+  end
 end

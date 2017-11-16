@@ -81,9 +81,27 @@ RSpec.feature 'Authns', type: :feature, js: true do
   end
 
   feature 'login' do
+    background(:each) do
+      signup user_props
+      login user_props
+    end
+
     context 'valid user login' do
-      scenario 'closes form and displays current user name'
-      scenario 'menu shows logout option'
+      scenario 'closes form and displays current user name' do
+        expect(page).to have_css('#navbar-loginlabel',
+                                 text: /#{user_props[:name]}/)
+        expect(page).to have_no_css('#login-form') # dropdown goes away
+        expect(page).to have_no_css('#logout-form') # dropdown goes away
+      end
+      scenario 'menu shows logout option with identity' do
+        find('#navbar-loginlabel').click
+        expect(page).to have_css('#user_id', text: /.+/, visible: false)
+        expect(page).to have_css('#logout-identity label',
+                                 text: user_props[:name])
+        within('#logout-form') do
+          expect(page).to have_button('Logout')
+        end
+      end
       scenario 'can access authenticated resources'
     end
 
