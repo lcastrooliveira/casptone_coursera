@@ -26,13 +26,17 @@
                     name="login_submit"
                     type="submit"> Login </button>
         </div>
+        <div id="new-account">
+            <label>New here?</label>
+            <a ui-sref="accountSignup" class="initialism">Sign Up</a>
+        </div>
     </form>
 </div>
 <div ng-show="$ctrl.getCurrentUser()">
     <form id="logout-form" 
         name="login_form" 
         ng-submit="$ctrl.logout()">
-        <span id="user_id" class="id" ng-if="$ctrl.getCurrentUser">
+        <span id="user_id" class="id" ng-if="$ctrl.getCurrentUser()">
             {{$ctrl.getCurrentUser().id}}
         </span>
         <div id="logout-identity">

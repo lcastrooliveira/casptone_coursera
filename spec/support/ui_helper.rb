@@ -32,4 +32,14 @@ module UiHelper
       expect(page).to have_no_css('#login-form')
     end
   end
+
+  def logout
+    return if page.has_css?('#navbar-loginlabel', text: 'Login')
+    # logout
+    find('#navbar-loginlabel').click
+    find_button('Logout').click
+    # dropdown goes away
+    expect(page).to have_no_css('#login-form')
+    expect(page).to have_no_css('#logout-form')
+  end
 end
