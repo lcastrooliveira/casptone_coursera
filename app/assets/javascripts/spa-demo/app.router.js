@@ -19,8 +19,12 @@
         .state('accountSignup', {
             url: '/signup',
             templateUrl: APP_CONFIG.signup_page_html
+        })
+        .state('authn', {
+            url: '/authn',
+            templateUrl: APP_CONFIG.authn_page_html
         });
 
-        $urlRouterProvider.otherwise("/");
+        // $urlRouterProvider.otherwise("/");
     }
 })();
