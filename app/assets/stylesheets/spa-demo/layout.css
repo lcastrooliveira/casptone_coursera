@@ -10,3 +10,9 @@ form .invalid {
     padding-left: 0px;
     padding-right: 0px;
 }
+
+/********************* navbar *****************/
+.nav li form {
+    padding-left: 10px;
+    padding-right: 10px;
+}

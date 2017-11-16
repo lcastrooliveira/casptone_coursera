@@ -5,15 +5,15 @@
 
         <div class="form-group">
             <div id="login-email">
-                <label for="email">email</label>
+                <label>email</label>
                 <input type="email" 
                  name="login_email" 
                  ng-model="$ctrl.loginForm.email" 
                  required="required"/>
             </div>
             <div id="login-password">
-                <label for="password">password</label>
-                <input type="passwod" 
+                <label>password</label>
+                <input type="password" 
                  name="login_password" 
                  ng-model="$ctrl.loginForm.password" 
                  required="required"/>
@@ -21,6 +21,9 @@
         </div>
 
         <div id="login-submit">
+            <span class="invalid" ng-hide="login_form.$dirty">
+                {{$ctrl.loginForm.errors.full_messages}}
+            </span>
             <button class="btn btn-default" 
                     ng-disabled="login_form.$invalid" 
                     name="login_submit"
@@ -34,7 +37,6 @@
 </div>
 <div ng-show="$ctrl.getCurrentUser()">
     <form id="logout-form" 
-        name="login_form" 
         ng-submit="$ctrl.logout()">
         <span id="user_id" class="id" ng-if="$ctrl.getCurrentUser()">
             {{$ctrl.getCurrentUser().id}}

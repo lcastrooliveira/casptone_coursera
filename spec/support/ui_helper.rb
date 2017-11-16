@@ -21,15 +21,27 @@ module UiHelper
     end
   end
 
-  def login(credentials, success = true)
+  def fillin_login(credentials)
     find('#navbar-loginlabel', text: 'Login').click
     within('#login-form') do
       fill_in('login_email', with: credentials[:email])
       fill_in('login_password', with: credentials[:password])
-      click_button('Login')
     end
+  end
+
+  def login(credentials, success = true)
+    fillin_login credentials
+    click_button('Login')
     using_wait_time 5 do
       expect(page).to have_no_css('#login-form')
+    end
+  end
+
+  def logged_in?(account = nil)
+    if account
+      page.has_css?('#navbar-loginlabel', text: /#{account[:name]}/)
+    else
+      page.has_css?('#user_id', text: /.+/, visible: false)
     end
   end
 
