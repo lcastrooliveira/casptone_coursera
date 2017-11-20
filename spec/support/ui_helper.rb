@@ -1,4 +1,10 @@
 module UiHelper
+  def create_user
+    user_props = FactoryGirl.attributes_for(:user)
+    user = FactoryGirl.create(:user, user_props)
+    user_props.merge(id: user.id, uid: user.uid)
+  end
+
   def fillin_signup(registration)
     visit "#{ui_path}/#/signup" unless page.has_css?('#signup-form')
     expect(page).to have_css('#signup-form', wait: 5)
@@ -22,6 +28,7 @@ module UiHelper
   end
 
   def fillin_login(credentials)
+    visit root_path unless page.has_css?('#navbar-loginlabel')
     find('#navbar-loginlabel', text: 'Login').click
     within('#login-form') do
       fill_in('login_email', with: credentials[:email])
@@ -46,12 +53,9 @@ module UiHelper
   end
 
   def logout
-    return if page.has_css?('#navbar-loginlabel', text: 'Login')
-    # logout
-    find('#navbar-loginlabel').click
-    find_button('Logout').click
-    # dropdown goes away
-    expect(page).to have_no_css('#login-form')
-    expect(page).to have_no_css('#logout-form')
+    return unless logged_in?
+    find('#navbar-loginlabel').click unless page.has_button?('Logout')
+    find_button('Logout', wait: 5).click
+    expect(page).to have_no_css('#user_id', visible: false, wait: 5)
   end
 end
