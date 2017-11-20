@@ -5,11 +5,17 @@
     .module('spa-demo.subjects')
     .component('sdImageSelector', {
       templateUrl: imageSelectorTemplateUrl,
-      controller: ImageSelectorController
+      controller: ImageSelectorController,
+      bindings: {
+        authz: '<'
+      }
     })
     .component('sdImageEditor', {
       templateUrl: imageEditorTemplateUrl,
-      controller: ImageEditorController
+      controller: ImageEditorController,
+      bindings: {
+        authz: '<'
+      }
     });
   
   imageSelectorTemplateUrl.$inject = ['spa-demo.config.APP_CONFIG'];
