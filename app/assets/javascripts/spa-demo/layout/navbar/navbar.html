@@ -25,6 +25,9 @@
                     <li ui-sref-active="active">
                         <a ui-sref="images({id: null})">Images</a>
                     </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="things({id: null})">Things</a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -37,7 +40,7 @@
         
         <ul class="nav navbar-nav navbar-right">
             <li id="login-dropdown" class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <span id="navbar-loginlabel">{{ $ctrl.getLoginLabel() }}</span>
                 <span class="caret"></span>
             </a>

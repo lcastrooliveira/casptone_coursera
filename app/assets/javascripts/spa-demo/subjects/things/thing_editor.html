@@ -1,0 +1,71 @@
+<form name="thingform" class="thing-form row">
+  <span class="thing_id id">{{$ctrl.item.id}}</span>
+  <span class="invalid">{{$ctrl.item.errors.full_messages}}</span>
+
+  <div class="thing-name row col-lg-12">
+    <label class="col-xs-3">Name:</label>
+    <input type="text" 
+     class="col-xs-9" 
+     name="thing-name" 
+     ng-model="$ctrl.item.name" 
+     ng-readonly="!$ctrl.authz.canUpdate" 
+     maxlength="60"
+     pattern=".{3,}"
+     title="3 character minimum for Name"
+     required="required"/>
+    <span class="invalid">{{$ctrl.item.errors.name}}</span>
+  </div>
+  <div class="thing-desc row col-lg-12">
+    <label class="col-xs-3">Description:</label>
+    <textarea
+     maxlength="4000" 
+     class="col-xs-9"
+     cols="30" 
+     name="thing-desc" 
+     ng-model="$ctrl.item.description" 
+     ng-readonly="!$ctrl.authz.canUpdate" 
+     title="3 character minimum for Description"/>
+    <span class="invalid">{{$ctrl.item.errors.name}}</span>
+  </div>
+  <span ng-show="$ctrl.authz.canGetDetails">
+    <div class="thing-notes row col-lg-12">
+      <label class="col-xs-3">Notes:</label>
+      <textarea
+      maxlength="4000" 
+      class="col-xs-9"
+      cols="30" 
+      name="thing-notes" 
+      ng-model="$ctrl.item.notes" 
+      ng-readonly="!$ctrl.authz.canUpdate" 
+      title="3 character minimum for Notes"/>
+      <span class="invalid">{{$ctrl.item.errors.name}}</span>
+    </div>
+  </span>
+  <div class="thing-controls">
+    <span ng-show="$ctrl.authz.authenticated">
+      <button name="thing-create" 
+       ng-show="!$ctrl.item.id && $ctrl.authz.canCreate" 
+       type="submit" 
+       ng-disabled="thingform.$invalid" 
+       ng-click="$ctrl.create()">Create Thing</button>
+
+      <span ng-show="$ctrl.item.id">
+        <button name="thing-update" 
+        type="submit" 
+        ng-show="$ctrl.authz.canUpdate" 
+        ng-disabled="!thingform.$dirty || thingform.$invalid" 
+        ng-click="$ctrl.update()">Update Thing</button>
+
+        <button name="thing-delete" 
+          type="submit" 
+          ng-show="$ctrl.authz.canDelete" 
+          ng-click="$ctrl.remove()">Delete Thing</button>
+      </span>
+      
+      <button name="thing-clear" 
+      type="submit" 
+      ng-show="$ctrl.item.id || thingform.$dirty" 
+      ng-click="$ctrl.clear()">Clear Thing</button>
+    </span>
+  </div>
+</form>

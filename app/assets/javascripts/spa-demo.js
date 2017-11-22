@@ -31,6 +31,11 @@
 //= require spa-demo/foos/foos.directive
 
 //= require spa-demo/subjects/subjects.module
+
 //= require spa-demo/subjects/images/images.component
 //= require spa-demo/subjects/images/images.service
 //= require spa-demo/subjects/images/images_authz.directive
+
+//= require spa-demo/subjects/things/things.service
+//= require spa-demo/subjects/things/things.component
+//= require spa-demo/subjects/things/things_authz.directive
