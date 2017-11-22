@@ -7,6 +7,6 @@
 
   ImageLinkableThing.$inject = ['$resource', 'spa-demo.config.APP_CONFIG'];
   function ImageLinkableThing($resource, APP_CONFIG) {
-    return $resource(APP_CONFIG.server_url+'/api/images/:image_id/linkable_images');
+    return $resource(APP_CONFIG.server_url+'/api/images/:image_id/linkable_things');
   }
 })();

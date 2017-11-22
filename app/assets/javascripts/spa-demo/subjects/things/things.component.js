@@ -58,11 +58,13 @@
     vm.clear = clear;
     vm.update = update;
     vm.remove = remove;
+    vm.haveDirtyLinks = haveDirtyLinks;
+    vm.updateImageLinks = updateImageLinks;
 
     vm.$onInit = function() {
       console.log('ThingEditorController', $scope);
       if($stateParams.id) {
-        reload($stateParams.id);
+        $scope.$watch(function() { return vm.authz.authenticated }, function() { reload($stateParams.id); });
       } else {
         newResource();
       }
@@ -81,6 +83,16 @@
       );
       vm.item = Thing.get({id: $stateParams.id});
       $q.all([vm.images.$promise, vm.item.$promise]).catch(handleError);
+    }
+
+    function haveDirtyLinks() {
+      for(var i = 0; vm.images && i < vm.images.length; i++) {
+        var ti = vm.images[i];
+        if(ti.toRemove || ti.originalPriority != ti.priority) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function newResource() {
@@ -106,11 +118,29 @@
     function update() {
       $scope.thingform.$setPristine();
       vm.item.errors = null;
-      vm.item.$update().then(
-        function() {
-          $state.reload();
-        }, handleError
-      );
+      var update = vm.item.$update();
+      updateImageLinks(update);
+    }
+
+    function updateImageLinks(promise) {
+      console.log('updating links to images');
+      var promises = [];
+      if(promise) { promises.push(promise); }
+      angular.forEach(vm.images, function(ti) {
+        if(ti.toRemove) {
+          promises.push(ti.$remove());
+        } else if(ti.originalPriority != ti.priority) {
+          promises.push(ti.$update());
+        }
+      });
+
+      console.log('waiting for promises', promises);
+      $q.all(promises).then(
+        function(response) {
+          console.log('promise.all response', response);
+          $scope.thingform.$setPristine();
+          reload();
+        }, handleError);
     }
 
     function remove() {
