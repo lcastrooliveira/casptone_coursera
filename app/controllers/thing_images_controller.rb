@@ -17,7 +17,7 @@ class ThingImagesController < ApplicationController
 
   def linkable_things
     image = Image.find(params[:image_id])
-    @things = Thing.not_linked(image)
+    @thing_images = current_user ? Thing.not_linked(image) : name
     render 'things/index'
   end
 

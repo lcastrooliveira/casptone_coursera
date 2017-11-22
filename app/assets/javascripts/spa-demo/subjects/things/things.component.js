@@ -49,24 +49,39 @@
     }
   }
 
-  ThingEditorController.$inject = ['$scope', '$state', '$stateParams', 'spa-demo.subjects.Thing'];
-  function ThingEditorController($scope, $state, $stateParams, Thing) {
+  ThingEditorController.$inject = ['$scope', '$state', '$stateParams', 
+                                   '$q', 'spa-demo.subjects.Thing',
+                                   'spa-demo.subjects.ThingImage'];
+  function ThingEditorController($scope, $state, $stateParams, $q, Thing, ThingImage) {
     var vm = this;
     vm.create = create;
     vm.clear = clear;
     vm.update = update;
     vm.remove = remove;
 
-    if($stateParams.id) {
-      vm.item = Thing.get({id: $stateParams.id});
-    } else {
-      newResource();
-    }
-
     vm.$onInit = function() {
       console.log('ThingEditorController', $scope);
+      if($stateParams.id) {
+        reload($stateParams.id);
+      } else {
+        newResource();
+      }
     };
     return;
+
+    function reload(thingId) {
+      var itemId = thingId ? thingId : vm.item.id;
+      vm.images = ThingImage.query({thing_id: itemId});
+      vm.images.$promise.then(
+        function() {
+          angular.forEach(vm.images, function(ti) {
+            ti.originalPriority = ti.priority;
+          });
+        }
+      );
+      vm.item = Thing.get({id: $stateParams.id});
+      $q.all([vm.images.$promise, vm.item.$promise]).catch(handleError);
+    }
 
     function newResource() {
       vm.item = new Thing();

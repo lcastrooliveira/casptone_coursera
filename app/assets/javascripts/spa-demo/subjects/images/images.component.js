@@ -41,8 +41,13 @@
     return;
   }
 
-  ImageEditorController.$inject = ['$scope', '$state', '$stateParams', 'spa-demo.subjects.Image'];
-  function ImageEditorController($scope, $state, $stateParams, Image) {
+  ImageEditorController.$inject = ['$scope', '$state', 
+                                   '$stateParams', '$q',
+                                   'spa-demo.subjects.Image',
+                                   'spa-demo.subjects.ImageThing',
+                                   'spa-demo.subjects.ImageLinkableThing'];
+  function ImageEditorController($scope, $state, $stateParams, 
+                                 $q, Image, ImageThing, ImageLinkableThing) {
     var vm = this;
     vm.create = create;
     vm.clear = clear;
@@ -50,7 +55,7 @@
     vm.remove = remove;
 
     if($stateParams.id) {
-      vm.item = Image.get({id: $stateParams.id});
+      reload($stateParams.id);
     } else {
       newResource();
     }
@@ -65,13 +70,19 @@
       return vm.item;
     }
 
+    function reload(imageId) {
+      var itemId = imageId ? imageId : vm.item.id;
+      vm.item = Image.get({id: itemId});
+      vm.things = ImageThing.query({image_id: itemId});
+      $q.all([vm.item.$promise, vm.things.$promise]).catch(handleError);
+    }
+
     function clear() {
       newResource();
       $state.go('.', {id: null});
     }
 
     function create() {
-      $scope.imageform.$setPristine();
       vm.item.errors = null;
       vm.item.$save().then(
         function() {
@@ -81,11 +92,11 @@
     }
 
     function update() {
-      $scope.imageform.$setPristine();
       vm.item.errors = null;
       vm.item.$update().then(
         function() {
           $state.reload();
+          $scope.imageform.$setPristine();
         }, handleError
       );
     }
@@ -107,6 +118,7 @@
         vm.item['errors'] = {}
         vm.item['errors']['full_messages'] = [response];
       }
+      $scope.imageform.$setPristine();
     }
   }
 })();
