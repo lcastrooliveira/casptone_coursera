@@ -81,7 +81,8 @@ RSpec.feature 'Authns', type: :feature, js: true do
   feature 'anonymous user' do
     scenario 'shown login form' do
       visit root_path
-      click_on('Login')
+      # click_on('Login')
+      find('a', text: 'Login').click
       expect(page).to have_no_css('#logout-form')
       expect(page).to have_css('#login-form')
     end
