@@ -1,7 +1,7 @@
 # Gemfile
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.6'
+gem 'rails', '4.2.7.1'
 
 gem 'devise_token_auth', '~> 0.1', '>=0.1.39'
 gem 'pry-rails', '~> 0.3', '>=0.3.4'
