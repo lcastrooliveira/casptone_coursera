@@ -7,7 +7,7 @@ RSpec.feature 'ManageFoos', type: :feature, js: true do
   FOO_LIST_XPATH = FooUiHelper::FOO_LIST_XPATH
   let(:foo_state) { FactoryGirl.attributes_for(:foo) }
 
-  feature 'view existing Foos' do
+  xfeature 'view existing Foos' do
     let(:foos) do
       (1..5).map { FactoryGirl.create(:foo) }.sort_by { |v| v['name'] }
     end
@@ -32,7 +32,7 @@ RSpec.feature 'ManageFoos', type: :feature, js: true do
     end
   end
 
-  feature 'add new Foo' do
+  xfeature 'add new Foo' do
     background(:each) do
       visit root_path
       expect(page).to have_css('h3', text: 'Foos')
@@ -82,7 +82,7 @@ RSpec.feature 'ManageFoos', type: :feature, js: true do
     end
   end
 
-  feature 'with existing Foo' do
+  xfeature 'with existing Foo' do
     background(:each) do
       create_foo foo_state
     end
