@@ -52,6 +52,33 @@ module ApiHelper
     expect(response).to have_http_status(status) if status
     parsed_body
   end
+
+  def apply_admin account
+    User.find(account.symbolize_keys[:id]).roles.create(:role_name=>Role::ADMIN)
+    return account
+  end
+
+  def apply_originator account, model_class
+    User.find(account.symbolize_keys[:id]).add_role(Role::ORIGINATOR, model_class).save
+    return account
+  end
+
+  def apply_role account, role, object
+    user=User.find(account.symbolize_keys[:id])
+    arr=object.kind_of?(Array) ? object : [object]
+    arr.each do |m|
+      user.add_role(role, m).save
+    end
+    return account
+  end
+
+  def apply_organizer account, object
+    apply_role(account,Role::ORGANIZER, object)
+  end
+
+  def apply_member account, object
+    apply_role(account, Role::MEMBER, object)
+  end
 end
 
 RSpec.shared_examples 'resource index' do |model|
@@ -113,11 +140,16 @@ RSpec.shared_examples 'resource create' do |model|
 end
 
 RSpec.shared_examples 'resource update' do |model|
-  let(:resource) { FactoryGirl.create(model) }
+  let(:resource) do
+    jpost send("#{model}s_path"), FactoryGirl.attributes_for(model)
+    expect(response).to have_http_status(:created)
+    parsed_body
+  end
+
   let(:new_state) { FactoryGirl.attributes_for(model) }
 
   it "can update #{model}" do
-    jput send("#{model}_path", resource.id), new_state
+    jput send("#{model}_path", resource['id']), new_state
     expect(response).to have_http_status(:no_content)
 
     update_check if respond_to?(:update_check)
@@ -125,15 +157,20 @@ RSpec.shared_examples 'resource update' do |model|
 end
 
 RSpec.shared_examples 'resource delete' do |model|
-  let(:resource) { FactoryGirl.create(model) }
+  let(:resource) do
+    jpost send("#{model}s_path"), FactoryGirl.attributes_for(model)
+    expect(response).to have_http_status(:created)
+    parsed_body
+  end
+
   it "can delete #{model}" do
-    jhead send("#{model}_path", resource.id)
+    jhead send("#{model}_path", resource['id'])
     expect(response).to have_http_status :ok
 
-    jdelete send("#{model}_path", resource.id)
+    jdelete send("#{model}_path", resource['id'])
     expect(response).to have_http_status :no_content
 
-    jhead send("#{model}_path", resource.id)
+    jhead send("#{model}_path", resource['id'])
     expect(response).to have_http_status :not_found
   end
 end
