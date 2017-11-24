@@ -25,7 +25,7 @@ RSpec.describe 'Images', type: :request do
     it "update fails with #{status}" do
       jput image_path(image_id), FactoryGirl.attributes_for(:image)
       expect(response).to have_http_status(status)
-      expect(parsed_body).to include("errors")
+      expect(parsed_body).to include('errors')
     end
   end
 
