@@ -2,12 +2,14 @@
 class ApplicationController < ActionController::API
   include DeviseTokenAuth::Concerns::SetUserByToken
   include ActionController::ImplicitRender
+  include Pundit
+
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from ActiveRecord::RecordNotFound, Mongoid::Errors::DocumentNotFound,
               with: :record_not_found
-
   rescue_from ActionController::ParameterMissing, with: :parameter_missing
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   protected
 
@@ -33,5 +35,14 @@ class ApplicationController < ActionController::API
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+  end
+
+  def user_not_authorized(exception)
+    user = pundit_user ? pundit_user.uid : 'Anonymous user'
+    payload = {
+      errors: { full_messages: ["#{user} not authorized: #{exception.query}"] }
+    }
+    render json: payload, status: :forbidden
+    Rails.logger.debug exception
   end
 end
