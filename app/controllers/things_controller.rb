@@ -11,14 +11,14 @@ class ThingsController < ApplicationController
 
   def index
     authorize Thing
-    @things = policy_scope(Thing.all)
-    @things = ApplicationPolicy.merge(@things)
+    things = policy_scope(Thing.all)
+    @things = ApplicationPolicy.merge(things)
   end
 
   def show
     authorize @thing
     # things = policy_scope(Thing.where(id: @thing.id))
-    things = ThingPolicy::Scope.new(current_user, Thing.where(id: @thing.id)).resolve(:show)
+    things = ThingPolicy::Scope.new(current_user, Thing.where(id: @thing.id)).resolve('left')
     @thing = ApplicationPolicy.merge(things).first
   end
 

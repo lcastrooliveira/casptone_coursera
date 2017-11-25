@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'ApiBars', type: :request do
   include_context 'db_cleanup_each'
-
+  let(:originator) { apply_originator(signup(FactoryGirl.attributes_for(:user)), Thing) }
+  let!(:user) { login originator }
   context 'caller requests list of Bars' do
     it_should_behave_like 'resource index', :bar do
       let(:response_check) do
@@ -30,7 +31,7 @@ RSpec.describe 'ApiBars', type: :request do
   context 'existing Bar' do
     it_should_behave_like 'resource update', :bar do
       let(:update_check) do
-        expect(Bar.find(resource.id).name).to eq(new_state[:name])
+        expect(Bar.find(resource['id']).name).to eq(new_state[:name])
       end
     end
 

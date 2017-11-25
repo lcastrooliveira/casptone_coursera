@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'Foo API', type: :request do
   include_context 'db_cleanup_each', :transaction
-
+  let(:originator) { apply_originator(signup(FactoryGirl.attributes_for(:user)), Thing) }
+  let!(:user) { login originator }
   context 'caller request a list of Foos' do
     it_should_behave_like 'resource index', :foo do
       let(:response_check) do
@@ -30,7 +31,7 @@ RSpec.describe 'Foo API', type: :request do
   context 'existing Foo' do
     it_should_behave_like 'resource update', :foo do
       let(:update_check) do
-        expect(Foo.find(resource.id).name).to eq(new_state[:name])
+        expect(Foo.find(resource['id']).name).to eq(new_state[:name])
       end
     end
 

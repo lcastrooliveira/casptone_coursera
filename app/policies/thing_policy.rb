@@ -20,24 +20,41 @@ class ThingPolicy < ApplicationPolicy
     organizer_or_admin?
   end
 
+  def get_linkables?
+    true
+  end
+
+  def get_images?
+    true
+  end
+
+  def add_image?
+    member_or_organizer?
+  end
+
+  def update_image?
+    organizer?
+  end
+
+  def remove_image?
+    organizer_or_admin?
+  end
+
   class Scope < Scope
-    def user_roles(action)
-      if action == :index
-        joins_clause = ["join Roles r on r.mname='Thing'",
-                        'r.mid=Things.id',
-                        "r.user_id #{user_criteria}"].join(' and ')
+    def user_roles(left_join)
+      joins_clause = ["#{left_join} join Roles r on r.mname='Thing'",
+                      'r.mid=Things.id',
+                      "r.user_id #{user_criteria}"].join(' and ')
+      if left_join
         scope.select('Things.*, r.role_name').joins(joins_clause)
-             .where('r.role_name' => [Role::ORGANIZER, Role::MEMBER])
-      elsif action == :show
-        joins_clause = ["left join Roles r on r.mname='Thing'",
-                        'r.mid=Things.id',
-                        "r.user_id #{user_criteria}"].join(' and ')
+      else
         scope.select('Things.*, r.role_name').joins(joins_clause)
+        .where('r.role_name' => [Role::ORGANIZER, Role::MEMBER])
       end
     end
 
-    def resolve(action = :index)
-      user_roles(action)
+    def resolve(left_join = nil)
+      user_roles(left_join)
     end
   end
 end
