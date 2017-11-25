@@ -4,7 +4,7 @@ class ThingsController < ApplicationController
   helper ThingsHelper
   before_action :set_thing, only: %i[show update destroy]
   wrap_parameters :thing, include: %w[name description notes]
-  before_action :authenticate_user!, except: %i[show]
+  before_action :authenticate_user!, except: %i[show index]
   # before_action :authenticate_user!, only: %i[create update destroy]
   after_action :verify_authorized
   after_action :verify_policy_scoped, only: :index
@@ -17,7 +17,8 @@ class ThingsController < ApplicationController
 
   def show
     authorize @thing
-    things = policy_scope(Thing.where(id: @thing.id))
+    # things = policy_scope(Thing.where(id: @thing.id))
+    things = ThingPolicy::Scope.new(current_user, Thing.where(id: @thing.id)).resolve(:show)
     @thing = ApplicationPolicy.merge(things).first
   end
 
