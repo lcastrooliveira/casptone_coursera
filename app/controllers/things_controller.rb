@@ -18,7 +18,8 @@ class ThingsController < ApplicationController
   def show
     authorize @thing
     # things = policy_scope(Thing.where(id: @thing.id))
-    things = ThingPolicy::Scope.new(current_user, Thing.where(id: @thing.id)).resolve('left')
+    things = ThingPolicy::Scope.new(current_user, Thing.where(id: @thing.id))
+                               .user_roles(false)
     @thing = ApplicationPolicy.merge(things).first
   end
 

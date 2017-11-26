@@ -41,20 +41,22 @@ class ThingPolicy < ApplicationPolicy
   end
 
   class Scope < Scope
-    def user_roles(left_join)
-      joins_clause = ["#{left_join} join Roles r on r.mname='Thing'",
+    def user_roles(members_only = true, allow_admin = true)
+      include_admin = allow_admin && @user && @user.is_admin?
+      member_join = members_only && !include_admin ? 'join' : 'left join'
+      joins_clause = ["#{member_join} Roles r on r.mname='Thing'",
                       'r.mid=Things.id',
                       "r.user_id #{user_criteria}"].join(' and ')
-      if left_join
+      if members_only
         scope.select('Things.*, r.role_name').joins(joins_clause)
+             .where('r.role_name' => [Role::ORGANIZER, Role::MEMBER])
       else
         scope.select('Things.*, r.role_name').joins(joins_clause)
-        .where('r.role_name' => [Role::ORGANIZER, Role::MEMBER])
       end
     end
 
-    def resolve(left_join = nil)
-      user_roles(left_join)
+    def resolve
+      user_roles
     end
   end
 end
