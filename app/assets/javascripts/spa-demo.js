@@ -12,6 +12,10 @@
 
 //= require spa-demo/config/config.module
 
+
+//= require spa-demo/authz/authz.module
+//= require spa-demo/authz/authz.service
+
 //= require spa-demo/authn/authn.module
 //= require spa-demo/authn/authn.config
 //= require spa-demo/authn/authn.service

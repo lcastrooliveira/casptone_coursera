@@ -13,6 +13,7 @@
         service.isAuthenticated = isAuthenticated;
         service.getCurrentUserName = getCurrentUserName;
         service.getCurrentUser = getCurrentUser;
+        service.getCurrentUserId = getCurrentUserId;
         service.login = login;
         service.logout = logout;
         activate();
@@ -83,6 +84,10 @@
 
         function getCurrentUser() {
             return service.user;
+        }
+
+        function getCurrentUserId() {
+            return service.user != null ? service.user.id : null;
         }
     }
 })();

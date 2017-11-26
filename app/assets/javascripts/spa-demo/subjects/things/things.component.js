@@ -28,17 +28,21 @@
     return APP_CONFIG.thing_editor_html;
   }
 
-  ThingSelectorController.$inject = ['$scope', '$stateParams', 'spa-demo.subjects.Thing'];
-  function ThingSelectorController($scope, $stateParams, Thing) {
+  ThingSelectorController.$inject = ['$scope', '$stateParams', 
+                                     'spa-demo.authz.Authz',
+                                     'spa-demo.subjects.Thing'];
+  function ThingSelectorController($scope, $stateParams, Authz, Thing) {
     var vm = this;
-    if(!$stateParams.id) {
-      vm.items = Thing.query();
-    }
 
     vm.$onInit = function() {
       console.log('ThingSelectorController', $scope);
-      console.log(vm.authz)      
-      $scope.$watch(function() { return vm.authz.authenticated }, logged);
+      $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
+                    function() {
+                      if(!$stateParams.id) {
+                        vm.items = Thing.query();
+                      }
+                    })
+      //$scope.$watch(function() { return vm.authz.authenticated }, logged);
     };
     return;
 
@@ -51,8 +55,9 @@
 
   ThingEditorController.$inject = ['$scope', '$state', '$stateParams', 
                                    '$q', 'spa-demo.subjects.Thing',
+                                   'spa-demo.authz.Authz',
                                    'spa-demo.subjects.ThingImage'];
-  function ThingEditorController($scope, $state, $stateParams, $q, Thing, ThingImage) {
+  function ThingEditorController($scope, $state, $stateParams, $q, Thing, Authz, ThingImage) {
     var vm = this;
     vm.create = create;
     vm.clear = clear;
@@ -63,11 +68,14 @@
 
     vm.$onInit = function() {
       console.log('ThingEditorController', $scope);
-      if($stateParams.id) {
-        $scope.$watch(function() { return vm.authz.authenticated }, function() { reload($stateParams.id); });
-      } else {
-        newResource();
-      }
+      $scope.$watch(function() { return Authz.getAuthorizedUserId(); },
+                    function() {
+                      if($stateParams.id) {
+                        reload($stateParams.id);
+                      } else {
+                        newResource();
+                      }
+                    });
     };
     return;
 
