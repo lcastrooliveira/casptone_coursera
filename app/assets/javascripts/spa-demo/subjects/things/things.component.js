@@ -15,6 +15,9 @@
       controller: ThingEditorController,
       bindings: {
         authz: '<'
+      },
+      require: {
+        thingsAuthz: '^sdThingsAuthz'
       }
     });
   
@@ -90,6 +93,7 @@
         }
       );
       vm.item = Thing.get({id: $stateParams.id});
+      vm.thingsAuthz.newItem(vm.item);
       $q.all([vm.images.$promise, vm.item.$promise]).catch(handleError);
     }
 
@@ -105,6 +109,7 @@
 
     function newResource() {
       vm.item = new Thing();
+      vm.thingsAuthz.newItem(vm.item);
       return vm.item;
     }
 

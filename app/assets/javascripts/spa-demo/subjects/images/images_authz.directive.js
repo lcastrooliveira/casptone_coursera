@@ -58,7 +58,7 @@
       vm.authz.canUpdate = ImagesAuthz.canUpdate(item);
       vm.authz.canDelete = ImagesAuthz.canDelete(item);
       vm.authz.canGetDetails = ImagesAuthz.canGetDetails(item);
-      console.log('Check acess', item, vm.authz);
+      console.log('Check access', item, vm.authz);
     }
 
     function activate() {
