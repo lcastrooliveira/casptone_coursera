@@ -12,10 +12,7 @@
         controller: ThingsAuthzController,
         controllerAs: 'vm',
         link: link,
-        restrict: 'A',
-        scope: {
-          authz: '=' // updates parent scope with authz evals
-        }
+        restrict: 'A'
     };
     return directive;
     

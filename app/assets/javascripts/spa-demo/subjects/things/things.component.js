@@ -17,7 +17,7 @@
         authz: '<'
       },
       require: {
-        thingsAuthz: '^sdThingsAuthz'
+        thingsAuthz: "^sdThingsAuthz"
       }
     });
   

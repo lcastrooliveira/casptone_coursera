@@ -153,7 +153,7 @@ RSpec.feature "AuthzThings", type: :feature, js:true do
 
       #updated thing shows up in list
       within("sd-thing-selector .thing-list") do
-        expect(page).to have_css("li a",:text=>thing_props[:name],:wait=>5)
+        expect(page).to have_css("li a",:text=>thing_props[:name],:wait=>8)
       end
     end
   end
