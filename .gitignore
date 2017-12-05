@@ -15,3 +15,4 @@
 # Ignore simplecov files
 /coverage
 
+/db/images
