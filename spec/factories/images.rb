@@ -6,6 +6,13 @@ FactoryGirl.define do
     trait :with_caption do
       caption { Faker::Lorem.sentence(1).chomp('.') }
     end
+    image_content { FactoryGirl.attributes_for(:image_content) }
+
+    after(:build) do |image|
+      image.image_content = FactoryGirl.build(:image_content, image.image_content) if image.image_content
+
+    end
+
     trait :with_roles do
       after(:create) do |image|
         Role.create(:role_name=>Role::ORGANIZER,

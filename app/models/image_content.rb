@@ -1,12 +1,39 @@
 class ImageContent
-  CONTENT_TYPES = ['image/jpeg', 'image/jpg']
   include Mongoid::Document
+  CONTENT_TYPES = ['image/jpeg', 'image/jpg']
+  MAX_CONTENT_SIZE = 10 * 1000 * 1024
+
+  # 3:2 ratios
+  THUMBNAIL = '100X67'.freeze
+  SMALL = '320X213'.freeze
+  MEDIUM = '800X533'.freeze
+  LARGE = '1200X800'.freeze
+
   field :image_id, type: Integer
   field :width, type: Integer
   field :height, type: Integer
   field :content_type, type: String
   field :content, type: BSON::Binary
   field :original, type: Mongoid::Boolean
+
+  validates_presence_of :image_id, :height, :width, :content_type, :content
+  validate :validate_width_height, :validate_content_length
+
+  def validate_width_height
+    if (!width || !height) && content
+      unless CONTENT_TYPES.include? content_type
+        errors.add(:content_type, "[#{content_type}] not supported type #{CONTENT_TYPES}")
+      end
+    end
+  end
+
+  def validate_content_length
+    if content && content.data.size > MAX_CONTENT_SIZE
+      errors.add(:content, "[#{content.data.size}] too large, greater than #{MAX_CONTENT_SIZE}")
+    end
+  end
+
+  scope :image, ->(image) { where(image_id: image.id) if image }
 
   def content=(value)
     if self[:content]

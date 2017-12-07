@@ -88,33 +88,133 @@ RSpec.describe "ImageContent", type: :model do
   end
 
   context "valid image content" do
-    it "requires image"
-    it "requires content_type"
-    it "requires content"
-    it "requires width"
-    it "requires height"
-    it "requires supported content_type"
-    it "checks content size maximium"
-  end
+    let(:ic) { ImageContent.new(image_id: 1, content_type: 'image/jpg', content: fin) }
+    before(:each) do
+      expect(ic.validate).to be true
+      expect(ic.errors.messages).to be_empty
+    end
+    it "requires image" do
+      ic.image_id = nil
+      expect(ic.validate).to be false
+      expect(ic.errors.messages).to include(:image_id)
+    end
+    it "requires content_type" do
+      ic.content_type = nil
+      expect(ic.validate).to be false
+      expect(ic.errors.messages).to include(:content_type)
+    end
+    it "requires content" do
+      ic.content = nil
+      expect(ic.validate).to be false
+      expect(ic.errors.messages).to include(:content)
+    end
+    it "requires width" do
+      ic.width = nil
+      expect(ic.validate).to be false
+      expect(ic.errors.messages).to include(:width)
+    end
+    it "requires height" do
+      ic.height = nil
+      expect(ic.validate).to be false
+      expect(ic.errors.messages).to include(:height)
+    end
 
-  context "image content factory" do
-    it "can build input attributes"
-    it "encoded input content attribute with base64"
-    it "can create image content"
-    it "can create image contents from attributes"
-  end
+    it "requires supported content_type" do
+      ic.content_type = 'image/png'
+      ic.content = ic.content
+      expect(ic.validate).to be false
+      expect(ic.errors.messages).to include(:content_type)
+      expect(ic.errors.messages[:content_type]).to include(/png/)
+    end
 
-  context "Image has ImageContent" do
-    it "has image_content"
-    context "Image factory" do
-      it "generates attributes with content"
-      it "builds Image with content"
+    it "checks content size maximium" do
+      content = ''
+      decoded_pat = ic.content.data
+      begin
+        content += decoded_pat
+      end while content.size < ImageContent::MAX_CONTENT_SIZE
+      ic.content = Base64.encode64(content)
+
+      expect(ic.validate).to be false
+      expect(ic.errors.messages).to include(:content)
     end
   end
 
-  context "Image scaling" do
-    it "creates for Image with ImageContent"
-    it "creates for Image and ImageContent"
+  context 'image content factory' do
+    include_context 'db_scope'
+    it 'can build input attributes' do
+      props = FactoryGirl.attributes_for(:image_content)
+      expect(props).to include(content_type: 'image/jpg')
+      expect(props).to include(:content)
+    end
+    it 'encoded input content attribute with base64' do
+      props = FactoryGirl.attributes_for(:image_content)
+      data = Base64.decode64(props[:content])
+      binary = ImageContent.to_binary(props[:content])
+      expect(data.size).to eq(binary.data.size)
+      expect(data).to eq(binary.data)
+    end
+    it 'can create image content' do
+      image = Image.create(creator_id: 1)
+      ic = FactoryGirl.create(:image_content, image_id: image.id)
+      expect(ic).to be_valid
+      expect(ic.image_id).to eq(image.id)
+    end
+    it 'can create image contents from attributes' do
+      image = Image.create(creator_id: 1)
+      props = FactoryGirl.attributes_for(:image_content)
+      ic = ImageContent.create(props.merge(image_id: image.id))
+      expect(ic).to be_valid
+    end
+  end
+
+  context 'Image has ImageContent' do
+    it 'has image_content' do
+      expect(Image.new).to respond_to(:image_content)
+    end
+    context 'Image factory' do
+      it 'generates attributes with content' do
+        props = FactoryGirl.attributes_for(:image)
+        expect(props).to include(:image_content)
+        expect(props[:image_content].class).to eq(Hash)
+        expect(props[:image_content]).to include(:content_type, :content)
+        expect(props[:image_content][:content_type]).to eq('image/jpg')
+      end
+      it 'builds Image with content' do
+        image = FactoryGirl.build(:image)
+        expect(image.image_content).to_not be_nil
+        expect(image.image_content.class).to eq(ImageContent)
+        expect(image.image_content.width).to_not be_nil
+        expect(image.image_content.height).to_not be_nil
+        expect(image.image_content.content_type).to eq('image/jpg')
+      end
+    end
+  end
+
+  context 'Image scaling' do
+    include_context 'db_scope'
+    let(:image) { FactoryGirl.build(:image) }
+    let(:image_content) { FactoryGirl.build(:image_content) }
+    before(:each) do
+      expect(defined? ImageContentCreator).to eq('constant')
+      image.save
+    end
+    after(:each) do
+      expect(ImageContent.image(image).count).to eq(5)
+      expect(ImageContent.image(image).where(original: true).count).to eq(1)
+      expect(ImageContent.image(image).not.where(original: true).count).to eq(4)
+    end
+    it 'creates for Image with ImageContent' do
+      creator = ImageContentCreator.new(image)
+      creator.build_contents
+      expect(creator.save!).to eq true
+    end
+    it 'creates for Image and ImageContent' do
+      image.image_content = nil
+      creator = ImageContentCreator.new(image, image_content)
+      creator.build_contents
+      expect(creator.save!).to eq true
+    end
   end
 
 
