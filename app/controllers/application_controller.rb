@@ -8,6 +8,7 @@ class ApplicationController < ActionController::API
 
   rescue_from ActiveRecord::RecordNotFound, Mongoid::Errors::DocumentNotFound,
               with: :record_not_found
+  rescue_from Mongoid::Errors::Validations, with: :mongoid_validation_error
   rescue_from ActionController::ParameterMissing, with: :parameter_missing
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -35,6 +36,12 @@ class ApplicationController < ActionController::API
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+  end
+
+  def mongoid_validation_error(exception)
+    payload = { errors: exception.record.errors.messages }
+    render json: payload, status: :unprocessable_entity
+    Rails.logger.debug exception.message
   end
 
   def user_not_authorized(exception)
