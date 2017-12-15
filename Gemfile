@@ -56,4 +56,5 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-ng-file-upload', '~>12.1', '>= 12.2.11'
   gem 'rails-assets-ng-file-upload-shim'
   gem 'rails-assets-ng-token-auth', '~> 0.0', '>= 0.0.27'
+  gem 'rails-assets-ui-cropper', '~> 1.0', '>= 1.0.4'
 end
