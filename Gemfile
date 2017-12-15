@@ -53,5 +53,7 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-angular-resource', '~>1.5.9'
   gem 'rails-assets-angular-ui-router', '~> 0.3', '>=0.3.1'
   gem 'rails-assets-bootstrap', '~> 3.3', '>=3.3.7'
+  gem 'rails-assets-ng-file-upload', '~>12.1', '>= 12.2.11'
+  gem 'rails-assets-ng-file-upload-shim'
   gem 'rails-assets-ng-token-auth', '~> 0.0', '>= 0.0.27'
 end

@@ -14,6 +14,17 @@
     </div>
   </div>
 
+  <sd-image-loader 
+    class="image-select"
+    result-data-uri="$ctrl.setImageContent(dataUri)"
+    ng-if="!$ctrl.item.id && $ctrl.authz.canCreate">
+    <span class="invalid" ng-show="imageform['image-file'].$error.maxSize">
+      Image size is too large ( max = 10MB )
+    </span>
+    <span class="invalid">{{ $ctrl.item.errors.content_type }}</span>
+    <span class="invalid">{{ $ctrl.item.errors.content }}</span>
+  </sd-image-loader>
+
   <div class="image-caption row col-lg-12">
     <label class="col-xs-3">Caption:</label>
     <input class="col-xs-9"
