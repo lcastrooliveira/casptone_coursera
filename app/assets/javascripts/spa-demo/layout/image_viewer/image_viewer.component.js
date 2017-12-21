@@ -9,6 +9,7 @@
       bindings: {
         name: '@',
         images: '<',
+        minWidth: "@"
       },
     });
 
@@ -17,8 +18,9 @@
     return APP_CONFIG.image_viewer_html;
   }
 
-  ImageViewerController.$inject = ['$scope'];
-  function ImageViewerController($scope) {
+  ImageViewerController.$inject = ['$scope', '$element', 'spa-demo.layout.ImageQuerySize'];
+  function ImageViewerController($scope, $element, ImageQuerySize) {
+    var sizing = null;
     var vm = this;
     vm.imageUrl = imageUrl;
     vm.imageId = imageId;
@@ -31,7 +33,28 @@
       vm.currentIndex = 0; 
       console.log(vm.name, 'ImageViewerController', $scope);
     };
+
+    vm.$postLink = function() {
+      console.log('post link', $element.find('div'), this.minWidth);
+      sizing = new ImageQuerySize($element.find('div'), this.minWidth);
+      vm.queryString = sizing.queryString();
+      sizing.listen(resizeHandler);
+    }
+
+    vm.$onDestroy = function() {
+      sizing.nolisten(resizeHandler);
+    }
+    
     return;
+
+    function resizeHandler(event) {
+      console.log('window resized');
+      if (sizing.updateSizes(vm.minWidth)) {
+        vm.queryString = sizing.queryString();
+        console.log('new query size', vm.queryString);
+        $scope.$apply();
+      }
+    }
 
     ////////////////
 
@@ -77,6 +100,7 @@
     function imageUrl(object) {
       if(!object) { return null }
       var url = object.image_id ? object.image_content_url : object.content_url;
+      url += vm.queryString;
       console.log(vm.name,'url=', url);
       return url;
     }
