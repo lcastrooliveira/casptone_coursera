@@ -2,6 +2,7 @@
 class ThingImage < ActiveRecord::Base
   belongs_to :image
   belongs_to :thing
+  acts_as_mappable through: :image
 
   validates :image, :thing, presence: true
 
@@ -9,10 +10,29 @@ class ThingImage < ActiveRecord::Base
   scope :things, -> { where(priority: 0) }
   scope :primary, -> { where(priority: 0).first }
 
-  scope :with_name, lambda {
-    joins(:thing).select('thing_images.*, things.name as thing_name')
+  scope :with_thing, lambda {
+    joins('left outer join things on things.id = thing_images.thing_id')
+      .select('thing_images.*')
   }
-  scope :with_caption, lambda {
-    joins(:image).select('thing_images.*, images.caption as image_caption')
+
+  scope :with_image, lambda {
+    joins('right outer join images on images.id = thing_images.image_id')
+      .select('thing_images.*', 'images.id as image_id')
   }
+
+  scope :with_name, -> { with_thing.select('things.name as thing_name') }
+  scope :with_caption, -> { with_image.select('images.caption as image_caption') }
+  scope :with_position, -> { with_image.select('images.lng, images.lat') }
+  scope :within_range, -> (origin, limit = nil, reverse = nil) {
+    scope = with_position
+    scope = scope.within(limit, origin: origin) if limit
+    scope = scope.by_distance(origin: origin, reverse: reverse) unless reverse.nil?
+    return scope
+  }
+
+  def self.with_distance(origin, scope)
+    scope.select('-1 as distance').with_position.each do |ti|
+      ti.distance = ti.distance_from(origin)
+    end
+  end
 end
