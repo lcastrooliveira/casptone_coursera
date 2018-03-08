@@ -23,6 +23,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_HOST=postgres
       - POSTGRES_PASSWORD
+      - GMAPS_GEOCODE_KEY
       - MONGO_HOST=mongo:27017
       - VNC_PASSWORD=password
 

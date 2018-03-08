@@ -16,3 +16,6 @@
 /coverage
 
 /db/images
+
+# Ignore .env file
+/.env
