@@ -1,7 +1,7 @@
 # ImagesController
 class ImagesController < ApplicationController
   before_action :set_image, only: %i[show update destroy content]
-  wrap_parameters :image, include: ['caption']
+  wrap_parameters :image, include: ['caption', 'position']
   before_action :authenticate_user!, only: %i[create update destroy]
   after_action :verify_authorized, except: [:content]
   after_action :verify_policy_scoped, only: :index
@@ -82,7 +82,7 @@ class ImagesController < ApplicationController
   end
 
   def image_params
-    params.require(:image).permit(:caption)
+    params.require(:image).permit(:caption, position: %i[lng lat])
   end
 
   def image_content_params
