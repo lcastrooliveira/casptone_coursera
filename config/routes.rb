@@ -19,6 +19,7 @@ Rails.application.routes.draw do
                               action: :content, defaults: { format: :jpg }
     get 'geocoder/addresses' => 'geocoder#addresses'
     get 'geocoder/positions' => 'geocoder#positions'
+    get 'subjects' => 'thing_images#subjects'
   end
 
   get '/ui' => 'ui#index'
