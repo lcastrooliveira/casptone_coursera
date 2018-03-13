@@ -1,5 +1,6 @@
 module SubjectsUiHelper
-  def visit_images images
+  def visit_images images=nil
+    images ||= Image.all
     visit "#{ui_path}/#/images/"
     within("sd-image-selector") do
       expect(page).to have_css(".image-list")

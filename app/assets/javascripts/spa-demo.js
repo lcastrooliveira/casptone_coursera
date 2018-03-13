@@ -60,3 +60,6 @@
 //= require spa-demo/subjects/images/image_linkable_things.service
 //= require spa-demo/subjects/images/image_things.service
 //= require spa-demo/subjects/things/thing_images.service
+
+//= require spa-demo/geoloc/geoloc.module
+//= require spa-demo/geoloc/geocoder.service

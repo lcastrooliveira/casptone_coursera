@@ -54,9 +54,11 @@
                                     '$q', 'spa-demo.authz.Authz',
                                    'spa-demo.subjects.Image',
                                    'spa-demo.subjects.ImageThing',
-                                   'spa-demo.subjects.ImageLinkableThing'];
+                                   'spa-demo.subjects.ImageLinkableThing',
+                                   'spa-demo.geoloc.geocoder',];
   function ImageEditorController($scope, $state, $stateParams, DataUtils, 
-                                 $q, Authz, Image, ImageThing, ImageLinkableThing) {
+                                 $q, Authz, Image, ImageThing, ImageLinkableThing,
+                                 geocoder) {
     var vm = this;
     vm.selected_linkables = [];
     vm.create = create;
@@ -65,6 +67,7 @@
     vm.remove = remove;
     vm.linkThings = linkThings;
     vm.setImageContent = setImageContent;
+    vm.locationByAddress = locationByAddress;
 
     vm.$onInit = function() {
       console.log('ImageEditorController', $scope);
@@ -93,6 +96,9 @@
       vm.linkable_things = ImageLinkableThing.query({image_id: itemId});
       vm.imagesAuthz.newItem(vm.item);
       $q.all([vm.item.$promise, vm.linkable_things.$promise, vm.things.$promise]).catch(handleError);
+      vm.item.$promise.then(function(image) {
+        vm.location = geocoder.getLocationByPosition(image.position);
+      });
     }
 
     function clear() {
@@ -139,6 +145,17 @@
         function() {
           clear();
         }, handleError
+      );
+    }
+
+    function locationByAddress(address) {
+      console.log("locationByAddress for", address);
+      geocoder.getLocationByAddress(address).$promise.then(
+        function(location) {
+          vm.location = location;
+          vm.item.position = location.position;
+          console.log('location', vm.location);
+        }
       );
     }
 
